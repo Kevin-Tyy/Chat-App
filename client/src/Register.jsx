@@ -8,8 +8,8 @@ const Register = () => {
 		const {data} = await axios.post('/register', {username, password})
 	}
 	return (
-		<div className="bg-blue-100 h-screen flex items-center">
-			<form className="w-80 mx-auto mb-60" onSubmit={register}>
+		<div className="bg-gray-900 h-screen flex items-center">
+			<form className="bg-transparent w-80 mx-auto mb-60" onSubmit={register}>
 				<input
 					value={username}
 					onChange={(e) => setUsername(e.target.value)}

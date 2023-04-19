@@ -45,9 +45,7 @@ const loginUser = async (req, res) => {
 			console.log("user found");
 			{user.password !== password
 					? res.send({ msg: "password mismatch" })
-					:
-					 
-					res.send({msg: "User profile verifcation complete",});
+					:res.send({msg: "User profile verifcation complete",});
 			}
 		} else {
 			res.send({ msg: "User not found" });
@@ -56,7 +54,6 @@ const loginUser = async (req, res) => {
 		res.send({ msg: "please fill in the missing fields" });
 	}
 };
-
 
 module.exports = {
 	test,

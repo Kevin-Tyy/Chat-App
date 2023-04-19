@@ -1,7 +1,9 @@
 const express = require('express');
+const cors = require('cors')
 const db = require('./config/dbconfig')
 const User = require('./models/UserModel');
 const router = require('./routes/UserRoute');
+
 const dotenv = require('dotenv').config();
 const PORT = process.env.PORT
 const app = express();

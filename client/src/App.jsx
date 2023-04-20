@@ -1,14 +1,18 @@
 import Login from "./Login"
 import Register from "./Register"
 import axios from 'axios'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 function App() {
-  
-  axios.defaults.baseURL = 'https://localhost:4000/api'
-  axios.defaults.withCredentials = true  
-
   return (
-    <Register/>
-    // <Login/>
+    <>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/register" exact element={<Register/>}/>
+        <Route path="/login" exact element={<Login/>}/>
+
+      </Routes>
+    </BrowserRouter>
+    </>
   )
 }
 

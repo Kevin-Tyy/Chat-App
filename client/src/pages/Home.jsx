@@ -1,18 +1,18 @@
-import React, { useEffect } from 'react'
 import axios from 'axios'
-import { Navigate } from 'react-router-dom';
+import React from 'react'
+import { useEffect } from 'react'
 const Home = () => {
-    useEffect(()=>{
-        const jwtCookie = document.cookie[0];
-        if (jwtCookie){  
-                return(
-                    <h1>Home</h1>
-                )
-        } else {
+    const populateHome = async () =>{
+        const { data } = await axios.get('http://localhost:4000/api/protectedroute');
 
-          <Navigate to="/login"/>
-        }
+        console.log(data);
+    }
+    useEffect(()=>{
+        populateHome()
     }, [])
+  return (
+    <div>Home</div>
+  )
 }
 
 export default Home

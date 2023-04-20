@@ -1,23 +1,35 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET
 
-const jwtAuth = ( req, res , next ) => {
+const jwtAuth = async ( req, res , next ) => {
     const token = req.cookie.token;
-    console.log(token);
+    console.log(`token ${token}`);
         
-    if(token){
+    if(!token){
+        res.status(403).json({
+            msg : 'User not logged in'
+        });
+    }else{
         try {
-            jwt.verify(token, JWT_SECRET)
-            console.log('User verified')
-            next()
+            const data = await jwt.verify( token , JWT_SECRET);
+            console.log(data);
+
+            if(!jwt.verify(token, JWT_SECRET )){
+                console.log('token is invalid');
+                throw {
+                    msg : 'Invalid token'
+                }
+            }
+            else{
+                console.log('here after verify jwt');
+                const data = jwt.verify(token, JWT_SECRET);
+                console.log('data setting with jwt verify :>> ', data);
+                next();
+            }
 
         } catch (error) {
-            res.status(400).send('Invalid token')   
+            return res.status(500).send(error);   
         }
-        
-    }
-    else{
-        res.status(401).send('Access Denied')
     }
     
 }

@@ -33,7 +33,7 @@ const Register = () => {
 					variant="outlined"
 					required={true}
 					type="text"
-					className="text-field  block w-full rounded-md p-2 mb-2 !important"
+					className="text-field block w-full rounded-md p-2 mb-2 !important"
 					value={username}
 					onChange={(e) => setUsername(e.target.value)}
 				/>

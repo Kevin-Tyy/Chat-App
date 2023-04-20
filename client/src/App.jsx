@@ -1,6 +1,6 @@
-import Login from "./Login"
-import Register from "./Register"
-import axios from 'axios'
+import Login from "./pages/Login"
+import Register from "./pages/Register"
+import Home from "./pages/Home"
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 function App() {
   return (
@@ -9,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/register" exact element={<Register/>}/>
         <Route path="/login" exact element={<Login/>}/>
+        <Route path='/home' exact element={<Home/>}/>
 
       </Routes>
     </BrowserRouter>

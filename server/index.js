@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const db = require('./config/dbconfig')
 const User = require('./models/UserModel');
 const router = require('./routes/UserRoute');
@@ -16,6 +17,7 @@ app.use(express.urlencoded({extended : true}));
 db.connect()
 app.use('/api' , router)
 app.use(jwtAuth)
+app.use(cookieParser())
 
 app.listen(PORT, ()=>{
     console.log(`Server listening on port ${PORT}`);

@@ -44,7 +44,7 @@ const registerUser = async (req, res) => {
 			});
 		}
 	} else {
-		res.status(200).send({ msg: "please fill in the missing fields" });
+		res.status(400).send({ msg: "please fill in the missing fields" });
 	}
 };
 
@@ -63,11 +63,11 @@ const loginUser = async (req, res) => {
 				else if(result) {
 					jwt.sign({username, password}, jwtSecret, (err, token)=>{
 						if(err) throw err;
-						res.status(200).send({
+						res.cookie("token" , token, { httpOnly: true , secure : true, sameSite : 'none' , }).status(200).send({
 							msg: "User profile verifcation complete",
 							token: `token is ${token}`
 
-						}).cookie("token" , token, { httpOnly: true });
+						})
 						
 					})
 					
@@ -84,12 +84,30 @@ const loginUser = async (req, res) => {
 			res.status(200).send({ msg: "User not found" });
 		}
 	} else {
-		res.status(200).send({ msg: "please fill in the missing fields" });
+		res.status(400).send({ msg: "please fill in the missing fields" });
 	}
 };
 
+const protectedRoute = (req, res) => {
+	const token = req.cookies?.token;
+	if(token){
+		jwt.verify(token, jwtSecret , (err, userData)=>{
+			if(err){
+				throw err;
+			}
+			else{
+				const { id, username } = userData;
+				res.send({id , username})
+			}
+		})
+
+	}else{
+		res.status(401).json('no token')
+	}
+}
 module.exports = {
 	test,
 	registerUser,
 	loginUser,
+	protectedRoute
 };

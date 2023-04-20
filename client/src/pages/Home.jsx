@@ -1,16 +1,18 @@
-import React from 'react'
-
+import React, { useEffect } from 'react'
+import axios from 'axios'
+import { Navigate } from 'react-router-dom';
 const Home = () => {
-    const jwtCookie = document.cookie.split(';').find(cookie => cookie.startsWith('token='));
-    if (jwtCookie && jwtCookie.split('=')[1]) {
-        return (
-            <div>Home</div>
-        
-          )
-      } else {
-        window.location.href = '/login';
-      }
+    useEffect(()=>{
+        const jwtCookie = document.cookie[0];
+        if (jwtCookie){  
+                return(
+                    <h1>Home</h1>
+                )
+        } else {
 
+          <Navigate to="/login"/>
+        }
+    }, [])
 }
 
 export default Home

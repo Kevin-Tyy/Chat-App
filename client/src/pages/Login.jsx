@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';	
 import { Link } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 const Register = () => {
@@ -31,6 +31,7 @@ const Register = () => {
 				<TextField
 					label="Username"
 					variant="outlined"
+					required={true}
 					type="text"
 					className="text-field  block w-full rounded-md p-2 mb-2 !important"
 					value={username}
@@ -43,6 +44,7 @@ const Register = () => {
 					type="password"
 					className="text-field  block w-full rounded-md p-2 "
 					value={password}
+					required={true}
 					onChange={(e) => setPassword(e.target.value)}
 				/>
 

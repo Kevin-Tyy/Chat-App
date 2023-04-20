@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
 						jwtSecret,
 						(err, token) => {
 							if (err) throw err;
-							res.cookie("token", token)
+							res.cookie("token", token, { httpOnly: true }	)
 								.status(201)
 								.send({
 									msg: "new user created",
@@ -67,7 +67,7 @@ const loginUser = async (req, res) => {
 							msg: "User profile verifcation complete",
 							token: `token is ${token}`
 
-						}).cookie(token);
+						}).cookie("token" , token, { httpOnly: true });
 						
 					})
 					

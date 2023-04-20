@@ -31,6 +31,7 @@ const Register = () => {
 				<TextField
 					label="Username"
 					variant="outlined"
+					required={true}
 					type="text"
 					className="text-field  block w-full rounded-md p-2 mb-2 !important"
 					value={username}
@@ -40,6 +41,7 @@ const Register = () => {
 				<TextField
 					label="Password"
 					variant="outlined"
+					required={true}
 					type="password"
 					className="text-field  block w-full rounded-md p-2 "
 					value={password}

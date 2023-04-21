@@ -1,13 +1,13 @@
 const express = require('express');
 
-const { test, registerUser, loginUser, protectedRoute } = require('../controllers/UserControllers');
-const jwtAuth = require('../middlewares/jwtAuth');
+const { registerUser, loginUser, protectedRoute } = require('../controllers/UserControllers');
+const jwtAuth  = require('../middlewares/jwtAuth');
+const checkToken = require('../middlewares/checkToken');
 
 const router = express.Router();
 
-router.get('/test' , test )
 router.post('/register', registerUser )
 router.post('/login', loginUser)
-router.get('/protectedroute',  protectedRoute)
+router.get('/dashroute' , checkToken , protectedRoute)
 
 module.exports = router;

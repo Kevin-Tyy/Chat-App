@@ -3,9 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
-const test = (req, res) => {
-	res.json("test successful");
-};
+
 
 const registerUser = async (req, res) => {
 	const { username, password } = req.body;
@@ -65,7 +63,8 @@ const loginUser = async (req, res) => {
 						if(err) throw err;
 						res.cookie("token" , token, { httpOnly: true , secure : true, sameSite : 'none' , }).status(200).send({
 							msg: "User profile verifcation complete",
-							token: `token is ${token}`
+							token: `${token}`,
+							user : user
 
 						})
 						
@@ -89,25 +88,11 @@ const loginUser = async (req, res) => {
 };
 
 const protectedRoute = (req, res) => {
-	const token = req.cookies?.token;
-	if(token){
-		jwt.verify(token, jwtSecret , (err, userData)=>{
-			if(err){
-				throw err;
-			}
-			else{
-				const { id, username } = userData;
-				res.send({id , username})
-			}
-		})
-
-	}else{
-		res.status(401).json('no token')
-	}
+	res.send({ msg : 'Token verified from server' });
 }
 module.exports = {
-	test,
 	registerUser,
 	loginUser,
 	protectedRoute
 };
+

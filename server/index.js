@@ -15,6 +15,7 @@ app.use(express.urlencoded({extended : true}));
 
 db.connect()
 app.use('/api' , router)
+
 app.use(cookieParser())
 
 app.listen(PORT, ()=>{

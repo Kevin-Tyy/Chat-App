@@ -1,23 +1,31 @@
 import React, { useState } from "react";
 import axios from "axios";
 import CircularProgress from '@mui/material/CircularProgress';
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 const Register = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 
+	const navigate = useNavigate();
 	const registerUser = async (event) => {
-		event.preventDefault();
-		setLoading(true);
-		const { data } = await axios.post(
-			"http://localhost:4000/api/register",
-			{ username, password }
-		);
+		try {
+			event.preventDefault();
+			setLoading(true);
+			const { data } = await axios.post(
+				"http://localhost:4000/api/register",
+				{ username, password }
+			);
+			console.log(data);
+			setLoading(false);
+			navigate('/login')
+			
+		} catch (error) {
+			throw error
 
-		console.log(data);
-		setLoading(false);
+		}
+	
 	};
 	return (
 		<div className="h-screen flex items-center">
@@ -60,7 +68,9 @@ const Register = () => {
 				</p>
 			</form>
 		</div>
+		
 	);
+
 };
 
 export default Register;

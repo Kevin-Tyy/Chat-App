@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import CircularProgress from '@mui/material/CircularProgress';	
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 const Register = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
-
+	const navigate = useNavigate();
 	const registerUser = async (event) => {
 		event.preventDefault();
 		setLoading(true);
@@ -18,6 +18,16 @@ const Register = () => {
 
 		console.log(data);
 		setLoading(false);
+			
+		if(data.user){
+			alert(data.msg);
+			navigate('/dashboard');	
+			localStorage.setItem('token', data.token);	
+
+		}		
+		else{
+			alert(data.msg);
+		}
 	};
 	return (
 		<div className="h-screen flex items-center">

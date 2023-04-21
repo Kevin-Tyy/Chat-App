@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
 
+
 const registerUser = async (req, res) => {
 	const { username, password } = req.body;
 	const hashedPassword = await bcrypt.hash(password, 10);
@@ -28,11 +29,13 @@ const registerUser = async (req, res) => {
 						jwtSecret,
 						(err, token) => {
 							if (err) throw err;
-							res.status(201).send({
-								msg: "new user created",
-								data: data,
-								token: `ok and token is ${token}`,
-							});
+							res.cookie("token", token, { httpOnly: true }	)
+								.status(201)
+								.send({
+									msg: "new user created",
+									data: data,
+									token: `ok and token is ${token}`
+								});
 						}
 					);
 				}
@@ -51,26 +54,31 @@ const loginUser = async (req, res) => {
 
 		if (user) {
 			const hashedPassword = user.password;
-			bcrypt.compare(password, hashedPassword, (err, result) => {
-				if (err) {
+			bcrypt.compare(password, hashedPassword, (err , result) => {
+				if(err){
 					throw err;
-				} else if (result) {
-					jwt.sign(
-						{ username, password },
-						jwtSecret,
-						(err, token) => {
-							if (err) throw err;
-							res.status(200).send({
-								msg: "User profile verifcation complete",
-								token: `${token}`,
-								user: user,
-							});
-						}
-					);
-				} else {
-					res.status(400).send({ msg: "password mismatch" });
 				}
+				else if(result) {
+					jwt.sign({username, password}, jwtSecret, (err, token)=>{
+						if(err) throw err;
+						res.cookie("token" , token, { httpOnly: true , secure : true, sameSite : 'none' , }).status(200).send({
+							msg: "User profile verifcation complete",
+							token: `${token}`,
+							user : user
+
+						})
+						
+					})
+					
+				}
+				else{
+					res.status(400).send({ msg: "password mismatch" });
+
+				}
+
 			});
+
+
 		} else {
 			res.status(200).send({ msg: "User not found" });
 		}
@@ -80,10 +88,10 @@ const loginUser = async (req, res) => {
 };
 
 const protectedRoute = (req, res) => {
-	
-};
+}
 module.exports = {
 	registerUser,
 	loginUser,
-	protectedRoute,
+	protectedRoute
 };
+

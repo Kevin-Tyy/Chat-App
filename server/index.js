@@ -5,6 +5,7 @@ const db = require('./config/dbconfig')
 const User = require('./models/UserModel');
 const router = require('./routes/UserRoute');
 const dotenv = require('dotenv').config();
+const ws = require('ws');
 const PORT = 4000;
 const app = express();
 
@@ -18,7 +19,9 @@ app.use('/api' , router)
 
 app.use(cookieParser())
 
-app.listen(PORT, ()=>{
-    console.log(`Server listening on port ${PORT}`);
-});
+const server =  app.listen(PORT)
 
+const websocketserver = new ws.WebSocketServer({server})
+websocketserver.on('connection' , (connection, req) =>{
+    console.log(req.headers.cookie)
+})

@@ -3,10 +3,14 @@ import React, { useState } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useCookies } from 'react-cookie';
+
 import Chatpage from "./components/Chatpage";
 const Home = () => {
 	const [username, setUsername] = useState("");
-	const navigate = useNavigate();
+  const [cookies, setCookie] = useCookies(['token']);
+
+  const navigate = useNavigate();
 
 	const populateDashboard = async () => {
 		const token = localStorage.getItem("token");
@@ -19,6 +23,8 @@ const Home = () => {
 			}
 		);
 		console.log(data);
+    	setCookie('token', token , { path: '/' });
+
 	};
 
 	const logout = () => {
@@ -36,15 +42,19 @@ const Home = () => {
 			if (!user) {
 				localStorage.removeItem("token");
 				navigate("/login");
+				
 			} else {
 				populateDashboard();
 				// alert("Token found in local storage");
+        
 			}
 		} else {
+
 			navigate("/login");
+
 		}
 	}, []);
-  
+
 	return (
 
     <Chatpage/>

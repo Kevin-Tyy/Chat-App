@@ -1,38 +1,39 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET
+const jwtSecret = process.env.JWT_SECRET;
 
-const jwtAuth = async ( req, res , next ) => {
-    const token = req.cookie.token;
-    console.log(`token ${token}`);
-        
-    if(!token){
-        res.status(403).json({
-            msg : 'User not logged in'
-        });
-    }else{
-        try {
-            const data = await jwt.verify( token , JWT_SECRET);
-            console.log(data);
 
-            if(!jwt.verify(token, JWT_SECRET )){
-                console.log('token is invalid');
-                throw {
-                    msg : 'Invalid token'
+const jwtAuth  = (req, res, next) => {
+    const header = req.headers['authorization'];
+
+    if(typeof header !== 'undefined') {
+        const bearer = header.split(" ");
+        const token  = bearer[1];
+
+        if(!token){
+            res.status(403).json({
+                msg : 'User not logged in, token not provided'
+            });
+        }else{
+            try{
+                const data = jwt.verify(token, jwtSecret);
+                if(!data){
+                    res.status(401).send({ msg : 'Invalid token'});
                 }
-            }
-            else{
-                console.log('here after verify jwt');
-                const data = jwt.verify(token, JWT_SECRET);
-                console.log('data setting with jwt verify :>> ', data);
-                next();
-            }
+                else{
+                    res.status(200).send({ msg : 'Token verified' , data : data });
+                }
 
-        } catch (error) {
-            
-            return res.status(500).send(error);   
-
+            }catch(error){
+                return res.status(401).send({error : error, msg : 'Invalid token'});   
+            }
         }
+        next();
+
     }
-    
+    else    
+    {
+        return res.status(403).send({msg : "No token found... So no access granted"})   
+        
+    }
 }
-module.exports = jwtAuth
+module.exports = jwtAuth;

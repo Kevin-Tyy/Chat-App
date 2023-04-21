@@ -1,46 +1,55 @@
-import axios from 'axios'
-import React from 'react'
-import jwt_decode from 'jwt-decode';
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import axios from "axios";
+import React, { useState } from "react";
+import jwt_decode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import Chatpage from "./components/Chatpage";
 const Home = () => {
-    const navigate = useNavigate()
+	const [username, setUsername] = useState("");
+	const navigate = useNavigate();
 
-    const populateDashboard = async () => {
-      const token = localStorage.getItem('token');
-      const data  = await axios.get('http://localhost:4000/api/dashroute' , {
-        headers : {
-          'Authorization': 'Bearer ' + token
-          
-        }
+	const populateDashboard = async () => {
+		const token = localStorage.getItem("token");
+		const data = await axios.get(
+			"http://localhost:4000/api/protectedroute",
+			{
+				headers: {
+					Authorization: "Bearer " + token,
+				},
+			}
+		);
+		console.log(data);
+	};
 
-      })
- 
-      console.log(data);
+	const logout = () => {
+		alert("Are you sure you want to log out");
+		localStorage.removeItem("token");
+		navigate("/login");
+	};
 
-      
-    }
-    useEffect(()=>{
-      const token = localStorage.getItem('token');
-      if(token){
-        const user = jwt_decode(token)
-          if(!user){
-            localStorage.removeItem('token');
-            navigate('/login');
-            
-          }else{
-            populateDashboard();
-            alert('token has been found in local storage');
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			const user = jwt_decode(token);
+			setUsername(user.username);
 
-          }
-      }else{
-        navigate('/login');
-      }
+			if (!user) {
+				localStorage.removeItem("token");
+				navigate("/login");
+			} else {
+				populateDashboard();
+				// alert("Token found in local storage");
+			}
+		} else {
+			navigate("/login");
+		}
+	}, []);
+  
+	return (
 
-    },[])
-  return (
-    <div>Home</div>
-  )
-}
+    <Chatpage/>
+     
+	);
+};
 
-export default Home
+export default Home;

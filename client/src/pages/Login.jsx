@@ -8,6 +8,7 @@ const Register = () => {
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
+	
 	const registerUser = async (event) => {
 		event.preventDefault();
 		setLoading(true);

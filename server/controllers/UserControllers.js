@@ -34,8 +34,10 @@ const registerUser = async (req, res) => {
 								.send({
 									msg: "new user created",
 									data: data,
-									token: `ok and token is ${token}`
+									token: `${token}`
 								});
+
+
 						}
 					);
 				}
@@ -54,12 +56,13 @@ const loginUser = async (req, res) => {
 
 		if (user) {
 			const hashedPassword = user.password;
+			const id = user._id
 			bcrypt.compare(password, hashedPassword, (err , result) => {
 				if(err){
 					throw err;
 				}
 				else if(result) {
-					jwt.sign({username, password}, jwtSecret, (err, token)=>{
+					jwt.sign({id ,username, password}, jwtSecret, (err, token)=>{
 						if(err) throw err;
 						res.cookie("token" , token, { httpOnly: true , secure : true, sameSite : 'none' , }).status(200).send({
 							msg: "User profile verifcation complete",
@@ -70,9 +73,10 @@ const loginUser = async (req, res) => {
 						
 					})
 					
+
 				}
 				else{
-					res.status(400).send({ msg: "password mismatch" });
+					res.status(400).send({ msg: "password mismatch" }).end();
 
 				}
 

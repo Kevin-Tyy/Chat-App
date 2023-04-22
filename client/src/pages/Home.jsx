@@ -8,6 +8,7 @@ import { useCookies } from 'react-cookie';
 import Chatpage from "./components/Chatpage";
 const Home = () => {
 	const [username, setUsername] = useState("");
+	const [userId , setUserId] = useState("");
   const [cookies, setCookie] = useCookies(['token']);
 
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Home = () => {
 				},
 			}
 		);
-		console.log(data);
+		// console.log(data);
     	setCookie('token', token , { path: '/' });
 
 	};
@@ -46,6 +47,7 @@ const Home = () => {
 				} else {
 					populateDashboard();
 					setUsername(user.username);
+					setUserId(user.id)
 					// alert("Token found in local storage");
 			
 				}
@@ -64,12 +66,12 @@ const Home = () => {
 	}, []);
 
 	return (
-	<>
+	<div className="h-screen flex flex-col items-center justify-center " >
 	
-		<h1>You are logged in as {username}</h1>
-		<Chatpage loggedInUser={username}/>
+		<h1 className="text-center text-blue-500 font-bold">You are logged in as {username}</h1>
+		<Chatpage loggedInUserId={userId}/>
 	
-	</>
+	</div>
      
 	);
 };

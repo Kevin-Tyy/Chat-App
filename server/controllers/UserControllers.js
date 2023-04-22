@@ -73,7 +73,6 @@ const loginUser = async (req, res) => {
 						
 					})
 					
-
 				}
 				else{
 					res.status(400).send({ msg: "password mismatch" }).end();

@@ -36,17 +36,25 @@ const Home = () => {
 	useEffect(() => {
 		const token = localStorage.getItem("token");
 		if (token) {
-			const user = jwt_decode(token);
-			setUsername(user.username);
-
-			if (!user) {
-				localStorage.removeItem("token");
-				navigate("/login");
+			try {
+				const user = jwt_decode(token);
 				
-			} else {
-				populateDashboard();
-				// alert("Token found in local storage");
-        
+				if (!user) {
+					localStorage.removeItem("token");
+					navigate("/login");
+					
+				} else {
+					populateDashboard();
+					setUsername(user.username);
+					// alert("Token found in local storage");
+			
+				}
+				
+			} catch (error) {
+				console.log(error);
+				alert("Wrong Token")
+				localStorage.removeItem('token');	
+				navigate('/login')
 			}
 		} else {
 
@@ -56,8 +64,12 @@ const Home = () => {
 	}, []);
 
 	return (
-
-    <Chatpage/>
+	<>
+	
+		<h1>You are logged in as {username}</h1>
+		<Chatpage loggedInUser={username}/>
+	
+	</>
      
 	);
 };

@@ -9,4 +9,5 @@
 
 .button {
    @apply bg-blue-500 text-white block w-full rounded-md p-3.5 my-3 !important;
+   
 }

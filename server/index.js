@@ -33,10 +33,20 @@ websocketserver.on('connection' , (connection, req) =>{
             if(token){
                 jwt.verify(token , jwtSecret, (err, userData)=>{
                     if(err) throw err;
-                    console.log(userData);
+                     
+                    userData.username
+                    
+                    connection.id = userData.id
+                    connection.username = userData.username
                 })
             }
         }
     }
+    [...websocketserver.clients].forEach(client => {
+        client.send(JSON.stringify({
+                online :  [...websocketserver.clients].map(client => ({ userId : client.id, userName : client.username}))
+        
+            }           
+        ))
+    })
 })
-

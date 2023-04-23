@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const MessageModel = require("../models/MessageModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv").config();
@@ -91,10 +92,27 @@ const loginUser = async (req, res) => {
 };
 
 const protectedRoute = (req, res) => {
+	
 }
+
+const dbFetchMessages = async (req, res) => {
+	const {userId} = req.params;
+	const data = req.data
+	const ourUserId = data.id
+
+	const messages = await MessageModel.find({
+		sender : { $in : [ userId,  ourUserId] },
+		recipient : { $in : [ userId, ourUserId] }
+	}).sort({createdAt : -1})
+
+	res.json(messages);
+
+}
+
 module.exports = {
 	registerUser,
 	loginUser,
-	protectedRoute
+	protectedRoute,
+	dbFetchMessages
 };
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import SendIcon from "@mui/icons-material/Send";
+import axios from  'axios'
 import { useEffect } from "react";
 import AvatarComponent from "./Avatar";
 import { Typography } from "@mui/material";
@@ -12,6 +13,8 @@ const Chatpage = ({ loggedInUserId }) => {
 	const [newMessageText, setNewMessageText] = useState("");
 	const [messages , setMessages] = useState([]) 
 	const divUnderMessages = useRef()
+	const token = localStorage.getItem("token");
+
 
 	useEffect(() => {
 		const ws = new WebSocket("ws://localhost:4000");
@@ -72,6 +75,16 @@ const Chatpage = ({ loggedInUserId }) => {
 
 		}
 	}, [messages])
+
+	useEffect(()=>{
+		if(selectedUserId){
+			axios.get(`http://localhost:4000/api/messages/${selectedUserId}` ,{
+				headers: {
+					Authorization: "Bearer " + token,
+				},
+			})
+		}
+	},[selectedUserId])
 	return (
 		<div className="flex gap-3 h-5/6 w-full xl:w-5/6  rounded-2xl p-8 shadow-2xl">
 			<div className="bg--white w-3/12 pt-4 px-3 ">
@@ -112,16 +125,16 @@ const Chatpage = ({ loggedInUserId }) => {
 					<div className="relative h-full">
 						<div  className="overflow-y-scroll absolute inset-0 m-3 ">
 							{msgWithoutDups.map( message => (
-								<div className="flex flex-col-reverse">
+				
 									<div className={`${message.sender === loggedInUserId ? 'text-right' : 'text-left'}`}>
-										<div className={`inline-block p-4 m-1 rounded-3xl max-w-sm   whitespace-normal break-words ${message.sender === loggedInUserId ? 'bg-blue-500 text-white rounded-tl-3xl rounded-bl-3xl rounded-tr-3xl rounded-br-none ' : 'bg-white rounded-tl-3xl rounded-bl-none rounded-tr-3xl rounded-br-3xl'}`}>
-											<Typography variant="body1" key={message.sender }>
+										<div className={`inline-block py-3 px-5 m-1 rounded-3xl max-w-sm   whitespace-normal break-words ${message.sender === loggedInUserId ? 'bg-blue-500 text-white rounded-tl-3xl rounded-bl-3xl rounded-tr-3xl rounded-br-none ' : 'bg-white rounded-tl-3xl rounded-bl-none rounded-tr-3xl rounded-br-3xl'}`}>
+											<Typography variant="body1" >
 												{message.text}
 
 											</Typography>
 										</div>
 									</div>
-								</div>
+
 										
 							))}
 							<div className="h-12" ref={divUnderMessages}>

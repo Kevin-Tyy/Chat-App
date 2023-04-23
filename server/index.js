@@ -59,8 +59,7 @@ websocketserver.on('connection' , (connection, req) =>{
             await MessageDb.save();
             [...websocketserver.clients]
                 .filter(client => client.id === recipient)
-                .forEach(client => client.send(JSON.stringify({text, sender: connection.id, recipient : recipient, id: MessageDb._id})));
-                
+                .forEach(client => client.send(JSON.stringify({text, sender: connection.id, recipient : recipient, id: MessageDb._id}))); 
         }
     });
 

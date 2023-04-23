@@ -24,7 +24,6 @@ const Home = () => {
 			}
 		);
 		// console.log(data);
-    	setCookie('token', token , { path: '/' });
 
 	};
 

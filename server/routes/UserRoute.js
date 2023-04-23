@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { registerUser, loginUser, protectedRoute } = require('../controllers/UserControllers');
+const { registerUser, loginUser, protectedRoute, dbFetchMessages } = require('../controllers/UserControllers');
 const jwtAuth = require('../middlewares/jwtAuth');
 
 const router = express.Router();
@@ -8,5 +8,6 @@ const router = express.Router();
 router.post('/register', registerUser )
 router.post('/login', loginUser)
 router.get('/protectedroute' , jwtAuth , protectedRoute)
+router.get('/messages/:userId', jwtAuth , dbFetchMessages)
 
 module.exports = router;

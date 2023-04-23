@@ -20,14 +20,14 @@ const jwtAuth  = (req, res, next) => {
                     res.status(401).send({ msg : 'Invalid token'});
                 }
                 else{
-                    res.status(200).send({ msg : 'Token verified'});
+                    req.data = data;
+                    next();
                 }
 
             }catch(error){
                 return res.status(401).send({error : error, msg : 'Invalid token'});   
             }
         }
-        next();
 
     }
     else    

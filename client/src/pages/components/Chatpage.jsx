@@ -1,27 +1,31 @@
 import React, { useState, useRef } from "react";
 import SendIcon from "@mui/icons-material/Send";
-import axios from  'axios'
+import axios from "axios";
 import { useEffect } from "react";
-import AvatarComponent from "./Avatar";
 import { Typography } from "@mui/material";
 import Logo from "./logo";
-import { uniqBy } from 'lodash'
+import { uniqBy } from "lodash";
+import Contact from "./Contact";
 const Chatpage = ({ loggedInUserId }) => {
 	const [onlinePeople, setOnlinePeople] = useState({});
 	const [wsConnection, setWsConnection] = useState(null);
 	const [selectedUserId, setSelectedUserId] = useState(null);
 	const [newMessageText, setNewMessageText] = useState("");
-	const [messages , setMessages] = useState([]) 
-	const divUnderMessages = useRef()
+	const [offlinePeople, setOfflinePeople] = useState({});
+	const [messages, setMessages] = useState([]);
+	const divUnderMessages = useRef();
 	const token = localStorage.getItem("token");
 
-
 	useEffect(() => {
+		connectToWebSocket();
+	}, []);
+
+	const connectToWebSocket = () => {
 		const ws = new WebSocket("ws://localhost:4000");
 		setWsConnection(ws);
 		ws.addEventListener("message", handleMessage);
-	}, []);
-
+		ws.addEventListener("close", () => connectToWebSocket());
+	};
 	const showOnlinePeople = (peopleArray) => {
 		const people = {};
 		peopleArray.forEach(({ userId, userName }) => {
@@ -32,86 +36,115 @@ const Chatpage = ({ loggedInUserId }) => {
 
 	const handleMessage = (event) => {
 		const messageData = JSON.parse(event.data);
-		console.log({ event: event, message: messageData})
-		if ('online' in messageData) {
-			showOnlinePeople(messageData.online);
-			
-		}else if ( 'text' in messageData){
-			console.log({messageData});
-			setMessages(prev => ([...prev, {...messageData}]))
 
+		if ("online" in messageData) {
+			showOnlinePeople(messageData.online);
+		} else if ("text" in messageData) {
+			console.log({ messageData });
+			setMessages((prev) => [...prev, { ...messageData }]);
 		}
-		
 	};
 
 	const onlineUsersExclLoggedInUser = { ...onlinePeople };
 	delete onlineUsersExclLoggedInUser[loggedInUserId];
 
 	const sendMessage = (event) => {
-		if(newMessageText){
-
+		if (newMessageText) {
 			event.preventDefault();
+			console.log(newMessageText);
 			wsConnection.send(
 				JSON.stringify({
-						recipient: selectedUserId,
-						text: newMessageText,
-					},
-				)
+					recipient: selectedUserId,
+					text: newMessageText,
+				})
 			);
-			setNewMessageText('')
-			setMessages(prev => ([...prev, {
-				text : newMessageText , 
-				sender : loggedInUserId, 
-				recipient : selectedUserId,
-				id: Date.now()}]))
-		}
-
-	};
-	const msgWithoutDups = uniqBy(messages , 'id') 
-	useEffect(()=>{
-		const div = divUnderMessages.current
-		if(div){
-			div.scrollIntoView({ behavior: 'smooth' })
-
-		}
-	}, [messages])
-
-	useEffect(()=>{
-		if(selectedUserId){
-			axios.get(`http://localhost:4000/api/messages/${selectedUserId}` ,{
-				headers: {
-					Authorization: "Bearer " + token,
+			setNewMessageText("");
+			setMessages((prev) => [
+				...prev,
+				{
+					text: newMessageText,
+					sender: loggedInUserId,
+					recipient: selectedUserId,
+					_id: Date.now(),
 				},
-			})
+			]);
 		}
-	},[selectedUserId])
+	};
+	const msgWithoutDups = uniqBy(messages, "_id");
+
+	useEffect(() => {
+		const div = divUnderMessages.current;
+		if (div) {
+			div.scrollIntoView({ behavior: "smooth" });
+		}
+	}, [messages]);
+
+	useEffect(() => {
+		if (selectedUserId) {
+			axios.get(
+				`http://localhost:4000/api/messages/${selectedUserId}`,
+				{
+					headers: {
+						Authorization: "Bearer " + token,
+					},
+				}
+			).then((response) => {
+				const { data } = response;
+				setMessages(data);
+			});
+		}
+	}, [selectedUserId]);
+
+	useEffect(() => {
+		axios.get("http://localhost:4000/api/people", {
+			headers: {
+				Authorization: "Bearer " + token,
+			},
+		}).then((response) => {
+			const offlineUsersArray = response.data
+				.filter((person) => person._id !== loggedInUserId)
+				.filter(
+					(person) =>
+						!Object.keys(onlinePeople).includes(person._id)
+				);
+			const offlinePeople = {};
+			offlineUsersArray.forEach((person) => {
+				offlinePeople[person._id] = person;
+			});
+			
+			setOfflinePeople(offlinePeople);
+			console.log(offlinePeople)
+		});
+	}, [onlinePeople]);
+
 	return (
 		<div className="flex gap-3 h-5/6 w-full xl:w-5/6  rounded-2xl p-8 shadow-2xl">
 			<div className="bg--white w-3/12 pt-4 px-3 ">
 				<Logo />
 				{Object.keys(onlineUsersExclLoggedInUser).map((userId) => (
-					<div
+					<Contact
 						key={userId}
-						className={`border-b border-gray-200 py-2 pl-4 my-2 flex  items-center gap-3  rounded-lg cursor-pointer transition-all duration-300 ${
-							userId === selectedUserId
-								? "bg-gray-100"
-								: ""
-						}`}
-						onClick={() => setSelectedUserId(userId)}>
-						<AvatarComponent
-							userId={userId}
-							userName={onlinePeople[userId]}
-						/>
-						<Typography
-							variant="body1"
-							sx={{ textTransform: "capitalize" }}>
-							{onlinePeople[userId]}
-						</Typography>
-					</div>
+						userId={userId}
+						userName={onlineUsersExclLoggedInUser[userId]}
+						setSelectedUserId={setSelectedUserId}
+						selectedUserId={selectedUserId}
+						online={true}
+					/>
+				))}
+
+				{Object.keys(offlinePeople).map((userId) => (
+					<Contact
+						key={userId}
+						userId={userId}
+						userName={offlinePeople[userId].username}
+						setSelectedUserId={setSelectedUserId}
+						selectedUserId={selectedUserId}
+						online={false}
+					/>
 				))}
 			</div>
+
 			<div className="flex flex-col bg-gray-200 w-9/12 rounded-2xl">
-				
 				<div className="flex-grow ">
 					{!selectedUserId && (
 						<div className="flex h-full items-center justify-center">
@@ -123,26 +156,34 @@ const Chatpage = ({ loggedInUserId }) => {
 				</div>
 				{!!selectedUserId && (
 					<div className="relative h-full">
-						<div  className="overflow-y-scroll absolute inset-0 m-3 ">
-							{msgWithoutDups.map( message => (
-				
-									<div className={`${message.sender === loggedInUserId ? 'text-right' : 'text-left'}`}>
-										<div className={`inline-block py-3 px-5 m-1 rounded-3xl max-w-sm   whitespace-normal break-words ${message.sender === loggedInUserId ? 'bg-blue-500 text-white rounded-tl-3xl rounded-bl-3xl rounded-tr-3xl rounded-br-none ' : 'bg-white rounded-tl-3xl rounded-bl-none rounded-tr-3xl rounded-br-3xl'}`}>
-											<Typography variant="body1" >
-												{message.text}
-
-											</Typography>
-										</div>
+						<div className="overflow-y-scroll absolute inset-0 m-3 ">
+							{msgWithoutDups.map((message) => (
+								<div
+									key={message._id}
+									className={`${
+										message.sender ===
+										loggedInUserId
+											? "text-right"
+											: "text-left"
+									}`}>
+									<div
+										className={`inline-block py-3 px-5 m-1 rounded-3xl max-w-sm   whitespace-normal break-words ${
+											message.sender ===
+											loggedInUserId
+												? "bg-blue-500 text-white rounded-tl-3xl rounded-bl-3xl rounded-tr-3xl rounded-br-none "
+												: "bg-white rounded-tl-3xl rounded-bl-none rounded-tr-3xl rounded-br-3xl"
+										}`}>
+										<Typography variant="body1">
+											{message.text}
+										</Typography>
 									</div>
-
-										
+								</div>
 							))}
-							<div className="h-12" ref={divUnderMessages}>
-								
-							</div>
+							<div
+								className="h-12"
+								ref={divUnderMessages}></div>
 						</div>
 					</div>
-		
 				)}
 				{!!selectedUserId && (
 					<form onSubmit={sendMessage}>

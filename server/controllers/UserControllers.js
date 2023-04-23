@@ -2,6 +2,7 @@ const User = require("../models/UserModel");
 const MessageModel = require("../models/MessageModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const UserModel = require("../models/UserModel");
 const dotenv = require("dotenv").config();
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -103,16 +104,24 @@ const dbFetchMessages = async (req, res) => {
 	const messages = await MessageModel.find({
 		sender : { $in : [ userId,  ourUserId] },
 		recipient : { $in : [ userId, ourUserId] }
-	}).sort({createdAt : -1})
+	}).sort({createdAt : 1})
 
 	res.json(messages);
 
 }
 
+const manageOnline = async (req, res) => {
+	const users = await User.find({}, {
+		_id : 1,
+		username : 1
+	})
+	res.send(users)
+}
 module.exports = {
 	registerUser,
 	loginUser,
 	protectedRoute,
-	dbFetchMessages
+	dbFetchMessages,
+	manageOnline
 };
 

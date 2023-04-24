@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useCookies } from 'react-cookie';
 
 import Chatpage from "./components/Chatpage";
+import Navbar from "./components/Navbar";
 const Home = () => {
 	const [username, setUsername] = useState("");
 	const [userId , setUserId] = useState("");
@@ -65,12 +66,13 @@ const Home = () => {
 	}, []);
 
 	return (
-	<div className="h-screen flex flex-col items-center justify-center " >
-	
-		<h1 className="text-center text-blue-500 font-bold">You are logged in as {username}</h1>
-		<Chatpage loggedInUserId={userId}/>
-	
-	</div>
+		<>
+			<Navbar username={username}/>	
+			<div className="h-screen flex flex-col items-center justify-center " >
+				<Chatpage loggedInUserId={userId}/>
+			
+			</div>
+		</>
      
 	);
 };

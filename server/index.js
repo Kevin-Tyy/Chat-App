@@ -27,6 +27,30 @@ const server =  app.listen(PORT)
 const websocketserver = new ws.WebSocketServer({server})
 websocketserver.on('connection' , (connection, req) =>{
 
+    const notifyOnlineUsers = () => {
+        [...websocketserver.clients].forEach(client => {
+            client.send(JSON.stringify({
+                    online :  [...websocketserver.clients].map(client => ({ userId : client.id, userName : client.username}))
+            
+                }           
+            ))
+        })
+    }
+
+    connection.isAlive = true;
+    connection.timer = setInterval(()=>{
+        connection.ping();
+        connection.deathTimer = setTimeout(()=>{
+            connection.isAlive = false;
+            clearInterval(connection.timer)
+            connection.terminate();
+            notifyOnlineUsers();
+        }, 1000)
+    }, 5000)
+
+    connection.on('pong', ()=> {
+       clearTimeout(connection.deathTimer) 
+    })
     //reading user credentials from cookie
     const cookies = req.headers.cookie
     if(cookies){
@@ -65,12 +89,6 @@ websocketserver.on('connection' , (connection, req) =>{
     
 
     // displaying online user connections
-    [...websocketserver.clients].forEach(client => {
-        client.send(JSON.stringify({
-                online :  [...websocketserver.clients].map(client => ({ userId : client.id, userName : client.username}))
-        
-            }           
-        ))
-    })
+    notifyOnlineUsers()
     
 });

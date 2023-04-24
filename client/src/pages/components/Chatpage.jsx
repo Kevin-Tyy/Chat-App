@@ -3,7 +3,6 @@ import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import { useEffect } from "react";
 import { Typography } from "@mui/material";
-import Logo from "./logo";
 import { uniqBy } from "lodash";
 import Contact from "./Contact";
 const Chatpage = ({ loggedInUserId }) => {
@@ -120,7 +119,7 @@ const Chatpage = ({ loggedInUserId }) => {
 	return (
 		<div className="flex gap-3 h-5/6 w-full xl:w-5/6  rounded-2xl p-8 shadow-2xl">
 			<div className="bg--white w-3/12 pt-4 px-3 ">
-				<Logo />
+				
 				{Object.keys(onlineUsersExclLoggedInUser).map((userId) => (
 					<Contact
 						key={userId}
@@ -144,7 +143,7 @@ const Chatpage = ({ loggedInUserId }) => {
 				))}
 			</div>
 
-			<div className="flex flex-col bg-gray-200 w-9/12 rounded-2xl">
+			<div className="flex flex-col bg-[url('https://t4.ftcdn.net/jpg/03/38/75/29/240_F_338752910_Th7euFDcjaI0nWNOBoi0JDSR0zu92WkM.jpg')] w-9/12 rounded-2xl">
 				<div className="flex-grow ">
 					{!selectedUserId && (
 						<div className="flex h-full items-center justify-center">
@@ -187,7 +186,7 @@ const Chatpage = ({ loggedInUserId }) => {
 				)}
 				{!!selectedUserId && (
 					<form onSubmit={sendMessage}>
-						<div className="flex gap-2 justify-center  bg-gray-500 p-2 rounded-b-2xl">
+						<div className="flex gap-2 justify-center  bg-stone-400 p-2 rounded-b-2xl">
 							<input
 								type="text"
 								value={newMessageText}

@@ -24,15 +24,10 @@ const Home = () => {
 				},
 			}
 		);
-		// console.log(data);
+		setCookie('token', token , { path: '/', secure: true , sameSite : false });
 
 	};
-
-	const logout = () => {
-		alert("Are you sure you want to log out");
-		localStorage.removeItem("token");
-		navigate("/login");
-	};
+	
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -48,7 +43,6 @@ const Home = () => {
 					populateDashboard();
 					setUsername(user.username);
 					setUserId(user.id)
-					// alert("Token found in local storage");
 			
 				}
 				

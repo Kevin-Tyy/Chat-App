@@ -100,7 +100,7 @@ const dbFetchMessages = async (req, res) => {
 	const {userId} = req.params;
 	const data = req.data
 	const ourUserId = data.id
-
+	
 	const messages = await MessageModel.find({
 		sender : { $in : [ userId,  ourUserId] },
 		recipient : { $in : [ userId, ourUserId] }

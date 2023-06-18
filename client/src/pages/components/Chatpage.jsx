@@ -69,6 +69,7 @@ const Chatpage = ({ loggedInUserId }) => {
 			]);
 		}
 	};
+	
 	const msgWithoutDups = uniqBy(messages, "_id");
 
 	useEffect(() => {
@@ -166,11 +167,11 @@ const Chatpage = ({ loggedInUserId }) => {
 											: "text-left"
 									}`}>
 									<div
-										className={`inline-block py-3 px-5 m-1 rounded-3xl max-w-sm   whitespace-normal break-words ${
+										className={`inline-block py-3 px-5 m-1 rounded-3xl max-w-sm  whitespace-normal break-words shadow-2xl ${
 											message.sender ===
-											loggedInUserId
+											loggedInUserId 
 												? "bg-blue-500 text-white rounded-tl-3xl rounded-bl-3xl rounded-tr-3xl rounded-br-none "
-												: "bg-white rounded-tl-3xl rounded-bl-none rounded-tr-3xl rounded-br-3xl"
+												: "bg-white  rounded-tl-3xl rounded-bl-none rounded-tr-3xl rounded-br-3xl"
 										}`}>
 										<Typography variant="body1">
 											{message.text}

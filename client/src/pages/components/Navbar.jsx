@@ -7,8 +7,13 @@ const Navbar = ({username}) => {
     const navigate = useNavigate()
 
     const logout = () => {
-        localStorage.removeItem('token')
-        navigate('/login')
+        if(window.confirm('Are you sure you want to logout')){
+            localStorage.removeItem('token')
+            navigate('/login')
+
+        }else{
+
+        }
     }
   return (
     <div className='flex  justify-between items-center h-16 bg-gray-200 shadow-md'>

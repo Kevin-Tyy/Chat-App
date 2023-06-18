@@ -25,6 +25,7 @@ app.use(cookieParser())
 const server =  app.listen(PORT)
 
 const websocketserver = new ws.WebSocketServer({server})
+
 websocketserver.on('connection' , (connection, req) =>{
 
     const notifyOnlineUsers = () => {
@@ -60,7 +61,6 @@ websocketserver.on('connection' , (connection, req) =>{
             if(token){
                 jwt.verify(token , jwtSecret, (err, userData)=>{
                     if(err) throw err;
-                                         
                     connection.id = userData.id
                     connection.username = userData.username
                 })
@@ -78,12 +78,12 @@ websocketserver.on('connection' , (connection, req) =>{
             recipient : recipient,
             text : text
         })
-        
+
         if(recipient && text) {
             await MessageDb.save();
             [...websocketserver.clients]
                 .filter(client => client.id === recipient)
-                .forEach(client => client.send(JSON.stringify({text, sender: connection.id, recipient : recipient, _id: MessageDb._id}))); 
+                .forEach(client => client.send(JSON.stringify({text : text, sender: connection.id, recipient : recipient , _id: MessageDb._id}))); 
         }
     });
     

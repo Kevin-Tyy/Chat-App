@@ -53,9 +53,7 @@ const Home = () => {
 				navigate('/login')
 			}
 		} else {
-
 			navigate("/login");
-
 		}
 	}, []);
 

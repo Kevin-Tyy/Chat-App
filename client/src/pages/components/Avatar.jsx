@@ -9,6 +9,7 @@ const AvatarComponent = ({userId, userName, online}) => {
     const userIdBase10 = parseInt(userId, 16);
     const colorIndex = userIdBase10 % colors.length;
     const color = colors[colorIndex];
+    if(!userName) return null;
   return (
     <div className='relative'>
       <Avatar sx={{ bgcolor : color , color: '#2c2c2c' , textTransform : 'uppercase' , fontSize: '15px', fontWeight: 'bold'}}>{userName[0]}</Avatar>
